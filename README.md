@@ -51,6 +51,11 @@ pip install -r requirements.txt
 python fetch_keywords.py
 ```
 
+**数据源** | *Data Source*：  
+本脚本从 [justjavac/weibo-trending-hot-search](https://github.com/justjavac/weibo-trending-hot-search) 项目获取每日更新的微博热搜数据，该项目每小时自动更新一次微博热搜排行榜。
+
+*This script fetches daily updated Weibo trending data from the [justjavac/weibo-trending-hot-search](https://github.com/justjavac/weibo-trending-hot-search) project, which automatically updates the Weibo trending list every hour.*
+
 ### 3. 启动爬虫爬取数据 | Start Crawler
 
 ```bash
