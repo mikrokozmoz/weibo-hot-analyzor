@@ -220,3 +220,4 @@ MIT License
 
 - [weibo-search](https://github.com/mikrokozmoz/weibo-search) - 微博爬虫框架
 - [weibo-posts-processing](https://github.com/mikrokozmoz/weibo-posts-processing) - 微博数据处理库
+- [weibo-trending-hot-search](https://github.com/justjavac/weibo-trending-hot-search) - 微博热搜总结
