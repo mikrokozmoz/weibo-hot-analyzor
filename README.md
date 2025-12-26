@@ -48,7 +48,7 @@ pip install -r requirements.txt
 ```bash
 # 自动获取微博当日热搜话题，保存到 files/keyword_list.txt
 # Automatically fetch Weibo trending topics and save to files/keyword_list.txt
-python fetch_keywords.py
+python -m weibo_hot_analyzor.fetch_keywords
 ```
 
 **数据源** | *Data Source*：  
@@ -61,7 +61,7 @@ python fetch_keywords.py
 ```bash
 # 启动爬虫脚本
 # Start the crawler script
-python post_crawler.py
+python -m weibo_hot_analyzor.post_crawler
 
 # 按提示输入你的微博Cookie（从浏览器开发者工具获取）
 # Enter your Weibo Cookie as prompted (obtain from browser developer tools)
@@ -81,7 +81,7 @@ python post_crawler.py
 ```bash
 # 将所有话题的CSV文件合并成一个，自动添加"关键词"列
 # Merge all topic CSV files into one, automatically add "keyword" column
-python merge_results.py
+python -m weibo_hot_analyzor.merge_results
 ```
 
 输出文件：`files/data_raw.csv`  
@@ -92,7 +92,7 @@ python merge_results.py
 ```bash
 # 启动数据去重脚本
 # Start data deduplication script
-python analyze.py --dedup
+python -m weibo_hot_analyzor.analyze --dedup
 
 # 按提示输入相似度阈值（0-1）
 # 推荐值: 0.75-0.95，默认值: 0.88
@@ -150,45 +150,45 @@ Submodule会在脚本首次运行时自动初始化，无需手动操作。
 
 ## 文件说明 | File Descriptions
 
-| 文件 | 说明 | 使用场景 |
+| 模块 | 说明 | 使用场景 |
 |------|------|--------|
-| `fetch_keywords.py` | 获取微博实时热搜话题 | 定期更新关键词列表 |
-| `post_crawler.py` | 爬虫启动脚本，自动初始化weibo-search模块 | 日常爬取数据 |
-| `merge_results.py` | 合并爬虫结果为统一数据集 | 爬虫完成后处理结果 |
-| `analyze.py` | 数据分析脚本，支持去重等操作 | 数据清洗和初步分析 |
+| `weibo_hot_analyzor.fetch_keywords` | 获取微博实时热搜话题 | 定期更新关键词列表 |
+| `weibo_hot_analyzor.post_crawler` | 爬虫启动脚本，自动初始化weibo-search模块 | 日常爬取数据 |
+| `weibo_hot_analyzor.merge_results` | 合并爬虫结果为统一数据集 | 爬虫完成后处理结果 |
+| `weibo_hot_analyzor.analyze` | 数据分析脚本，支持去重等操作 | 数据清洗和初步分析 |
 
-| File | Description | Use Case |
+| Module | Description | Use Case |
 |------|------|--------|
-| `fetch_keywords.py` | Fetch Weibo real-time trending topics | Regularly update keyword list |
-| `post_crawler.py` | Crawler startup script, auto-initialize weibo-search module | Daily data crawling |
-| `merge_results.py` | Merge crawler results into unified dataset | Process results after crawling |
-| `analyze.py` | Data analysis script, support deduplication operations | Data cleaning and initial analysis |
+| `weibo_hot_analyzor.fetch_keywords` | Fetch Weibo real-time trending topics | Regularly update keyword list |
+| `weibo_hot_analyzor.post_crawler` | Crawler startup script, auto-initialize weibo-search module | Daily data crawling |
+| `weibo_hot_analyzor.merge_results` | Merge crawler results into unified dataset | Process results after crawling |
+| `weibo_hot_analyzor.analyze` | Data analysis script, support deduplication operations | Data cleaning and initial analysis |
 
 ## 工作流程 | Workflow
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│ 1. fetch_keywords.py - 获取热搜关键词                        │
-│    Get trending keywords from Weibo                         │
-└────────────────────┬────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ 1. python -m weibo_hot_analyzor.fetch_keywords - 获取热搜关键词      │
+│    Get trending keywords from Weibo                                  │
+└────────────────────┬─────────────────────────────────────────────────┘
                      │
                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 2. post_crawler.py - 爬取数据                                │
-│    Crawl data with custom Cookie and similarity threshold   │
-└────────────────────┬────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ 2. python -m weibo_hot_analyzor.post_crawler - 爬取数据              │
+│    Crawl data with custom Cookie and similarity threshold            │
+└────────────────────┬─────────────────────────────────────────────────┘
                      │
                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 3. merge_results.py - 合并结果                               │
-│    Merge all topic results into data_raw.csv                │
-└────────────────────┬────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ 3. python -m weibo_hot_analyzor.merge_results - 合并结果             │
+│    Merge all topic results into data_raw.csv                         │
+└────────────────────┬─────────────────────────────────────────────────┘
                      │
                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 4. analyze.py --dedup - 数据去重                             │
-│    Deduplicate data with custom threshold                   │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ 4. python -m weibo_hot_analyzor.analyze --dedup - 数据去重           │
+│    Deduplicate data with custom threshold                            │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 ## 常见问题 | FAQ

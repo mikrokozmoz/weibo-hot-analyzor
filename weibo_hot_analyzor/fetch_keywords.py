@@ -5,6 +5,7 @@
 # Import regex and requests libraries
 import re
 import requests
+import os
 
 # 获取微博热搜关键词列表
 # Fetch Weibo hot search keywords list
@@ -51,6 +52,12 @@ def fetch_weibo_hot_keywords():
 # 将关键词保存到txt文件
 # Save keywords to a txt file
 def save_keywords_to_txt(keywords, filename="files/keyword_list.txt"):
+    # 自动创建目录（如果不存在）
+    # Auto create directory if it doesn't exist
+    directory = os.path.dirname(filename)
+    if directory and not os.path.exists(directory):
+        os.makedirs(directory, exist_ok=True)
+    
     with open(filename, "w", encoding="utf-8") as f:
         for kw in keywords:
             # 每个关键词单独一行写入
