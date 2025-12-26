@@ -200,11 +200,24 @@ A: 是的，需要从浏览器获取微博的Cookie，以便爬虫能正常访�
 1. 打开 weibo.com，登录你的账号
 2. 按 F12 打开开发者工具
 3. 在 Network 标签中找任意请求，复制 Request Headers 中的 Cookie 值
+4. 运行爬虫时，会弹出提示输入Cookie，粘贴即可
 
-*A: Yes, you need to obtain Weibo's Cookie from your browser for the crawler to access normally. Steps:*
+**Cookie 会被保存吗？**  
+*Will the Cookie be saved?*
+
+A: 会的！第一次输入Cookie后，程序会自动将其保存到 `weibo-search/weibo/settings.py` 中。之后每次运行爬虫时：
+- 如果直接按 Enter（不输入任何内容），会自动使用上次保存的Cookie
+- 如果需要更换Cookie，重新输入新的Cookie即可，会自动覆盖旧值
+
+*Yes! After entering the Cookie for the first time, the program will automatically save it to `weibo-search/weibo/settings.py`. Each subsequent crawler run:*
+- *If you just press Enter (without entering anything), it will automatically use the previously saved Cookie*
+- *If you need to change the Cookie, simply enter a new one, which will automatically replace the old value*
+
+**A: Yes, you need to obtain Weibo's Cookie from your browser for the crawler to access normally. Steps:*
 1. *Open weibo.com and log in*
 2. *Press F12 to open developer tools*
 3. *In the Network tab, find any request and copy the Cookie value from Request Headers*
+4. *When running the crawler, a prompt will appear to enter the Cookie, just paste it*
 
 ## 许可证 | License
 
