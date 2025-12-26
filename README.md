@@ -35,7 +35,7 @@
 ```bash
 # 克隆项目
 # Clone the project
-git clone <your-repo-url>
+git clone https://github.com/mikrokozmoz/weibo-hot-analyzor
 cd weibo-hot-analyzor
 
 # 安装依赖（一键安装）
