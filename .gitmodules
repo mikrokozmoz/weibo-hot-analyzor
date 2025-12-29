@@ -1,6 +1,3 @@
-[submodule "weibo-search"]
-	path = weibo-search
-	url = https://github.com/mikrokozmoz/weibo-search.git
 [submodule "processing"]
 	path = processing
 	url = https://github.com/mikrokozmoz/weibo-posts-processing.git
