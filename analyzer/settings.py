@@ -10,7 +10,7 @@ import os
 # [MUST MODIFY] Your Alibaba Cloud Bailian API Key
 # 还没有 Key？请访问: https://bailian.console.aliyun.com/
 # No Key yet? Visit: https://bailian.console.aliyun.com/
-API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxx" 
+API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
 
 # API 接入点
 # API Endpoint
