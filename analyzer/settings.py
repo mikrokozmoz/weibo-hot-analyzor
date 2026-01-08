@@ -66,3 +66,6 @@ PROMPT_STAGE2_FILE = os.path.join(PROMPT_DIR, 'correlation_prompt.txt')
 OUTPUT_STAGE1_CSV = 'analyzer/data/stage1_keyword_analysis.csv'        # 阶段一结果 / Stage 1 results
 OUTPUT_STAGE2_MD = 'analyzer/data/stage2_correlation_analysis_report.md'   # 阶段二报告 / Stage 2 report
 OUTPUT_FINAL_CONTEXT = 'analyzer/data/final_context_knowledge_base.txt' # 最终生成的背景库 / Final knowledge base
+
+TEST_POST_LIST = 'analyzer/data/post_list.csv'  # 用于打标测试的微博列表 / Post list for labeling test
+TEST_SAMPLE_SIZE = 20  # 抽取的测试条数 / Number of test samples

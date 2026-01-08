@@ -2,7 +2,7 @@ import pandas as pd
 from openai import OpenAI
 import time
 import os
-import settings  # 导入配置文件 / Import configuration file
+from . import settings  # 导入配置文件 / Import configuration file
 
 # --- 初始化客户端 ---
 # --- Initialize Client ---
