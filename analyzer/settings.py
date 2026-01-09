@@ -10,7 +10,7 @@ import os
 # [MUST MODIFY] Your Alibaba Cloud Bailian API Key
 # 还没有 Key？请访问: https://bailian.console.aliyun.com/
 # No Key yet? Visit: https://bailian.console.aliyun.com/
-API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
+API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
 
 # API 接入点
 # API Endpoint
@@ -69,3 +69,7 @@ OUTPUT_FINAL_CONTEXT = 'analyzer/data/final_context_knowledge_base.txt' # 最终
 
 TEST_POST_LIST = 'analyzer/data/post_list.csv'  # 用于打标测试的微博列表 / Post list for labeling test
 TEST_SAMPLE_SIZE = 20  # 抽取的测试条数 / Number of test samples
+
+# [批量推理结果] 百炼批量推理的结果下载 URL（带临时访问凭证）
+# [Batch Results] Batch inference result URL from Alibaba Qwen (with temporary credentials)
+RESULT_URL = "your_url"  # 替换为你的批量推理结果 URL / Replace with your batch result URL
