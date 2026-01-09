@@ -175,7 +175,7 @@ python -m analyzer.labeling_testing
 
 *Use Alibaba Cloud Bailian's batch inference service for large-scale labeling.*
 
-**步骤 1: 生成批量推理请求 | *Step 1: Generate Batch Requests*
+- **步骤 1: 生成批量推理请求 | *Step 1: Generate Batch Requests***
 
 ```bash
 python -m analyzer.batch_generator
@@ -189,15 +189,13 @@ python -m analyzer.batch_generator
 # Output: analyzer/data/batch_list.jsonl
 ```
 
-**步骤 2: 上传至百炼批量推理服务 | *Step 2: Upload to Alibaba Batch Service*
+- **步骤 2: 上传至百炼批量推理服务 | *Step 2: Upload to Alibaba Batch Service***
+  - 访问 https://dashscope.aliyuncs.com （选择批量推理服务）
+  - 上传 `batch_list.jsonl` 文件
+  - 等待任务完成，获取结果 URL
+  - *Visit https://dashscope.aliyuncs.com and use batch inference service*
 
-1. 访问 https://dashscope.aliyuncs.com （选择批量推理服务）
-2. 上传 `batch_list.jsonl` 文件
-3. 等待任务完成，获取结果 URL
-
-*Visit https://dashscope.aliyuncs.com and use batch inference service*
-
-**步骤 3: 下载并处理结果 | *Step 3: Download & Process Results*
+- **步骤 3: 下载并处理结果 | *Step 3: Download & Process Results***
 
 ```bash
 # 在 analyzer/settings.py 中更新 RESULT_URL
@@ -211,12 +209,11 @@ python -m analyzer.result_download_and_conversion
 # 3. batch_results_final_expanded.csv - 标签展开版本（10列：id、content、validity、stance、emotion_category、emotion_subtype、target、mf_main、mf_direction、reasoning）
 ```
 
-**关键特性 | *Key Features*
-
-- ✅ **自动去重** | Automatic deduplication：与 batch_generator 一致的去重逻辑，避免重复标注
-- ✅ **成本优化** | Cost optimization：不在请求体中存储原始正文，减少数据传输
-- ✅ **完整追溯** | Full traceability：根据 custom_id 从原始数据恢复正文，保证数据完整性
-- ✅ **标签拆解** | Label parsing：自动将 JSON label 拆解为单独列，支持后续分析
+- **关键特性 | *Key Features***
+  - ✅ **自动去重** | Automatic deduplication：与 batch_generator 一致的去重逻辑，避免重复标注
+  - ✅ **成本优化** | Cost optimization：不在请求体中存储原始正文，减少数据传输
+  - ✅ **完整追溯** | Full traceability：根据 custom_id 从原始数据恢复正文，保证数据完整性
+  - ✅ **标签拆解** | Label parsing：自动将 JSON label 拆解为单独列，支持后续分析
 
 ---
 
@@ -229,9 +226,8 @@ weibo-hot-analyzer/
 │   ├── settings.py                   # AI 分析参数配置 / AI parameters
 │   ├── summary.py                    # 两阶段分析脚本 / Two-stage analysis script
 │   ├── labeling_testing.py           # 打标测试工具 / Labeling testing tool
-│   ├── batch_generator.py            # 批量推理文件生成器 / Batch inference file generator (新 / New)
-│   ├── result_download_and_conversion.py  # 批量推理结果处理 / Batch result processor (新 / New)
-│   ├── download_sample_results.py    # 样本结果下载工具 / Sample results downloader (新 / New)
+│   ├── batch_generator.py            # 批量推理文件生成器 / Batch inference file generator
+│   ├── result_download_and_conversion.py  # 批量推理结果处理 / Batch result processor
 │   ├── data/                         # 数据目录 / Data directory
 │   │   ├── batch_example.jsonl       # 批量推理示例文件 / Batch inference example
 │   │   ├── batch_list.jsonl          # 生成的批量请求文件 / Generated batch requests
