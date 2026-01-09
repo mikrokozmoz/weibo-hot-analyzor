@@ -46,14 +46,22 @@ def generate_batch_list(csv_file=None, output_file='analyzer/data/batch_list.jso
         if 'id' not in df.columns or '微博正文' not in df.columns:
             raise ValueError(f"CSV 文件必须包含 'id' 和 '微博正文' 列 / CSV must have 'id' and '微博正文' columns")
         
+        print(f"正在读取数据..." )
+        print(f"Reading data from {csv_file}...")
+        print(f"原始数据行数 / Original rows: {len(df)}")
+        
+        # 按 id 去重，保留第一次出现的行（保留正文） / Deduplicate by id, keep first occurrence
+        df_deduped = df.drop_duplicates(subset=['id'], keep='first').reset_index(drop=True)
+        
+        print(f"去重后行数 / Rows after deduplication: {len(df_deduped)}")
+        print(f"删除重复数 / Duplicates removed: {len(df) - len(df_deduped)}")
+        
         # 读取 system prompt / Read system prompt
         with open(prompt_file, 'r', encoding='utf-8') as f:
             system_prompt = f.read()
         
-        print(f"正在读取数据..." )
-        print(f"Reading data from {csv_file}...")
-        print(f"总共 {len(df)} 条微博需要打标")
-        print(f"Total {len(df)} posts to label")
+        print(f"总共 {len(df_deduped)} 条微博需要打标")
+        print(f"Total {len(df_deduped)} posts to label")
         
         # 输出目录检查 / Check output directory
         output_dir = os.path.dirname(output_file)
@@ -65,7 +73,7 @@ def generate_batch_list(csv_file=None, output_file='analyzer/data/batch_list.jso
         print(f"Generating batch inference request file...")
         
         with open(output_file, 'w', encoding='utf-8') as f:
-            for idx, (_, row) in enumerate(df.iterrows(), 1):
+            for idx, (_, row) in enumerate(df_deduped.iterrows(), 1):
                 post_id = str(row['id']).strip()
                 content = str(row['微博正文']).strip()
                 
@@ -100,14 +108,14 @@ def generate_batch_list(csv_file=None, output_file='analyzer/data/batch_list.jso
         print(f"\n[OK] 批量请求文件已生成")
         print(f"[OK] Batch request file generated")
         print(f"  输出路径 / Output: {output_file}")
-        print(f"  总请求数 / Total requests: {len(df)}")
+        print(f"  总请求数 / Total requests: {len(df_deduped)}")
         print(f"\n下一步 / Next step:")
         print(f"  1. 上传 {output_file} 到阿里云百炼批量推理服务")
         print(f"  2. Upload {output_file} to Alibaba Bailian batch service")
         print(f"  3. 等待任务完成后，运行 result_download_and_conversion.py")
         print(f"  4. After completion, run result_download_and_conversion.py")
         
-        return len(df)
+        return len(df_deduped)
     
     except Exception as e:
         print(f"[ERROR] 生成失败 / Generation failed: {e}")

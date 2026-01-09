@@ -66,8 +66,8 @@ def process_batch_results(raw_jsonl_file='analyzer/data/batch_results_raw.jsonl'
                          csv_file=None,
                          output_csv='analyzer/data/batch_results_final.csv'):
     """
-    处理批量推理结果 JSONL，与原始 CSV 关联，生成最终的 id、content、label 三列 CSV
-    Process batch inference results JSONL, associate with original CSV,
+    处理批量推理结果 JSONL，与去重后的原始 CSV 关联，生成最终的 id、content、label 三列 CSV
+    Process batch inference results JSONL, associate with deduplicated original CSV,
     generate final CSV with id, content, label columns
     
     参数 Parameters:
@@ -86,20 +86,42 @@ def process_batch_results(raw_jsonl_file='analyzer/data/batch_results_raw.jsonl'
         print("\n正在处理批量推理结果...")
         print("Processing batch inference results...")
         
-        # 读取原始 CSV，建立 id->content 映射 / Read original CSV to build id->content mapping
+        # 读取原始 CSV / Read original CSV
         df_original = pd.read_csv(csv_file)
         if 'id' not in df_original.columns or '微博正文' not in df_original.columns:
             raise ValueError("CSV 文件必须包含 'id' 和 '微博正文' 列")
         
-        id_content_map = dict(zip(df_original['id'].astype(str), df_original['微博正文'].astype(str)))
+        print(f"  原始 CSV 行数 / Original CSV rows: {len(df_original)}")
         
-        print(f"  已加载 {len(id_content_map)} 条原始微博")
-        print(f"  Loaded {len(id_content_map)} original posts")
+        # 按 id 去重，保留第一次出现的行（与 batch_generator 保持一致）
+        # Deduplicate by id, keep first occurrence (consistent with batch_generator)
+        df_deduped = df_original.drop_duplicates(subset=['id'], keep='first').reset_index(drop=True)
+        
+        print(f"  去重后行数 / Deduplicated rows: {len(df_deduped)}")
+        print(f"  删除重复数 / Duplicates removed: {len(df_original) - len(df_deduped)}")
+        
+        # 建立 id->content 映射 / Build id->content mapping
+        id_content_map = dict(zip(df_deduped['id'].astype(str), df_deduped['微博正文'].astype(str)))
         
         # 读取百炼返回的 JSONL 结果 / Read Alibaba results JSONL
         # 百炼返回格式：{"custom_id": "...", "result": {"message": {"content": "..."}}, ...}
         results = []
         error_count = 0
+        
+        # 先读第一行看看结构 / Read first line to check structure
+        with open(raw_jsonl_file, 'r', encoding='utf-8') as f:
+            first_line = f.readline()
+            if first_line:
+                try:
+                    first_data = json.loads(first_line)
+                    print(f"\n  样本数据结构（第1行）/ Sample structure (line 1):")
+                    print(f"    顶级键 / Top keys: {list(first_data.keys())}")
+                    if 'result' in first_data:
+                        print(f"    result 键 / result keys: {list(first_data['result'].keys()) if isinstance(first_data['result'], dict) else 'non-dict'}")
+                    if 'body' in first_data:
+                        print(f"    body 键 / body keys: {list(first_data['body'].keys()) if isinstance(first_data['body'], dict) else 'non-dict'}")
+                except:
+                    pass
         
         with open(raw_jsonl_file, 'r', encoding='utf-8') as f:
             for idx, line in enumerate(f, 1):
@@ -109,28 +131,42 @@ def process_batch_results(raw_jsonl_file='analyzer/data/batch_results_raw.jsonl'
                     # 提取 custom_id (对应原始的 post_id) 和标注结果 / Extract custom_id and labeling result
                     custom_id = str(data.get('custom_id', ''))
                     
-                    # 百炼返回的消息内容在 result.message.content 中
-                    # Alibaba result structure: result.message.content contains the response
-                    try:
-                        result_obj = data.get('result', {})
-                        message_content = result_obj.get('message', {}).get('content', '')
-                        
-                        # 从映射表中获取原始微博内容 / Get original post content from mapping
-                        content = id_content_map.get(custom_id, '')
-                        
-                        results.append({
-                            'id': custom_id,
-                            'content': content,
-                            'label': message_content  # 保存原始 JSON 字符串 / Save raw JSON string
-                        })
-                        
-                        if idx % 100 == 0:
-                            print(f"  已处理 {idx} 条结果 / Processed {idx} results")
+                    # 尝试多个可能的路径来提取标注结果 / Try multiple possible paths to extract label
+                    message_content = ''
                     
-                    except Exception as e:
-                        error_count += 1
-                        print(f"  行 {idx} 解析失败 / Line {idx} parse error: {e}")
-                        continue
+                    # 路径 1: response.body.choices[0].message.content（百炼的实际结构）
+                    # Path 1: response.body.choices[0].message.content (Alibaba actual structure)
+                    if 'response' in data and isinstance(data['response'], dict):
+                        response_obj = data['response']
+                        if 'body' in response_obj and isinstance(response_obj['body'], dict):
+                            body_obj = response_obj['body']
+                            if 'choices' in body_obj and isinstance(body_obj['choices'], list) and len(body_obj['choices']) > 0:
+                                choice = body_obj['choices'][0]
+                                if isinstance(choice, dict) and 'message' in choice:
+                                    message_obj = choice['message']
+                                    if isinstance(message_obj, dict) and 'content' in message_obj:
+                                        message_content = message_obj['content']
+                    
+                    # 路径 2: result.message.content（备用）/ Path 2: result.message.content (backup)
+                    if not message_content and 'result' in data and isinstance(data['result'], dict):
+                        result_obj = data['result']
+                        if 'message' in result_obj and isinstance(result_obj['message'], dict):
+                            message_content = result_obj['message'].get('content', '')
+                    
+                    # 从映射表中获取原始微博内容 / Get original post content from mapping
+                    content = id_content_map.get(custom_id, '')
+                    
+                    results.append({
+                        'id': custom_id,
+                        'content': content,
+                        'label': message_content  # 保存原始 JSON 字符串 / Save raw JSON string
+                    })
+                    
+                    if idx <= 3:
+                        print(f"  样本结果 {idx}: custom_id={custom_id}, label_length={len(message_content)}")
+                    
+                    if idx % 100 == 0:
+                        print(f"  已处理 {idx} 条结果 / Processed {idx} results")
                 
                 except json.JSONDecodeError as e:
                     error_count += 1
@@ -154,6 +190,7 @@ def process_batch_results(raw_jsonl_file='analyzer/data/batch_results_raw.jsonl'
         
         print(f"\n[OK] 结果已保存到 {output_csv}")
         print(f"[OK] Results saved to {output_csv}")
+        print(f"  总行数 / Total rows: {len(results_df)}")
         print(f"  成功处理 / Successful: {len(results)} 条")
         print(f"  失败 / Failed: {error_count} 条")
         
